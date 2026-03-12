@@ -3,7 +3,7 @@ title: "Genies"
 description: "Create, configure, list, and manage voice AI genies"
 ---
 
-Genies are voice AI agents powered by ElevenLabs. Each genie has its own system prompt, voice configuration, conversation settings, and optional phone number.
+Genies are voice AI agents powered by our agent system. Each genie has its own system prompt, voice configuration, conversation settings, and optional phone number.
 
 <Note>
   Standard users can only manage their own genies. Admin users can manage all genies and view owner information by passing `adminMode: true`.
@@ -58,8 +58,8 @@ Retrieves a paginated list of genies with optional search filtering. Returns ess
         <ResponseField name="description" type="string">
           Genie description.
         </ResponseField>
-        <ResponseField name="elevenlabs_id" type="string">
-          ElevenLabs agent identifier.
+        <ResponseField name="agent_system_id" type="string">
+          Agent system identifier.
         </ResponseField>
         <ResponseField name="is_active" type="boolean">
           Whether the genie is currently active.
@@ -118,7 +118,7 @@ const response = await ApiService.invoke("genies", "list", undefined, {
         "id": "550e8400-e29b-41d4-a716-446655440000",
         "name": "Customer Support Bot",
         "description": "AI-powered customer support assistant",
-        "elevenlabs_id": "agent-el-550e8400",
+        "agent_system_id": "agent-el-550e8400",
         "is_active": true,
         "category": "Support",
         "created_at": "2024-01-15T10:30:00.000Z"
@@ -231,7 +231,7 @@ curl -X POST https://api.helpgenie.ai/v1/genies \
         "name": "Customer Support Bot",
         "description": "AI-powered customer support assistant",
         "brand": "Acme Corp",
-        "elevenlabs_id": "550e8400-e29b-41d4-a716-446655440008",
+        "agent_system_id": "550e8400-e29b-41d4-a716-446655440008",
         "is_active": true,
         "category": "Support",
         "voice": "EZ3epTG1EiOmx2GWRto6",
@@ -300,8 +300,8 @@ Retrieves a single genie by ID with its full configuration, including settings, 
     <ResponseField name="category" type="string">
       Genie category.
     </ResponseField>
-    <ResponseField name="elevenlabs_id" type="string">
-      ElevenLabs agent identifier.
+    <ResponseField name="agent_system_id" type="string">
+      Agent system identifier.
     </ResponseField>
     <ResponseField name="is_active" type="boolean">
       Whether the genie is active.
@@ -310,7 +310,7 @@ Retrieves a single genie by ID with its full configuration, including settings, 
       Whether the genie has completed initial setup.
     </ResponseField>
     <ResponseField name="voice" type="string">
-      ElevenLabs voice ID.
+      Voice ID from the agent system.
     </ResponseField>
     <ResponseField name="send_conv_reports" type="boolean">
       Whether conversation reports are sent after calls.
@@ -341,7 +341,7 @@ Retrieves a single genie by ID with its full configuration, including settings, 
             <ResponseField name="tts" type="object">
               <Expandable title="properties">
                 <ResponseField name="model_id" type="string">TTS model identifier.</ResponseField>
-                <ResponseField name="voice_id" type="string">ElevenLabs voice ID.</ResponseField>
+                <ResponseField name="voice_id" type="string">Voice ID from the agent system.</ResponseField>
                 <ResponseField name="stability" type="number">Voice stability (0-1).</ResponseField>
                 <ResponseField name="similarity_boost" type="number">Voice similarity (0-1).</ResponseField>
                 <ResponseField name="speed" type="number">Speech speed multiplier.</ResponseField>
@@ -448,7 +448,7 @@ curl -X POST https://api.helpgenie.ai/v1/genies \
     "description": "AI-powered customer support assistant",
     "brand": "Acme Corp",
     "category": "Support",
-    "elevenlabs_id": "550e8400-e29b-41d4-a716-446655440008",
+    "agent_system_id": "550e8400-e29b-41d4-a716-446655440008",
     "is_active": true,
     "is_setup": false,
     "voice": "EZ3epTG1EiOmx2GWRto6",
@@ -518,7 +518,7 @@ curl -X POST https://api.helpgenie.ai/v1/genies \
 
 ## Create genie
 
-Creates a new voice AI genie with the specified configuration. The genie is automatically provisioned in ElevenLabs.
+Creates a new voice AI genie with the specified configuration. The genie is automatically provisioned in the agent system.
 
 <ParamField body="resource" type="string" required>
   Must be `"genies"`
@@ -546,7 +546,7 @@ Creates a new voice AI genie with the specified configuration. The genie is auto
       Welcome message displayed on the web interface before a call begins.
     </ParamField>
     <ParamField body="voiceId" type="string">
-      ElevenLabs voice ID. Defaults to the platform default voice.
+      Voice ID from the agent system. Defaults to the platform default voice.
     </ParamField>
     <ParamField body="llmModel" type="string" default="gemini-3-flash-preview">
       LLM model identifier.
@@ -622,7 +622,7 @@ Creates a new voice AI genie with the specified configuration. The genie is auto
     <ResponseField name="description" type="string">Genie description.</ResponseField>
     <ResponseField name="brand" type="string">Brand name.</ResponseField>
     <ResponseField name="category" type="string">Category.</ResponseField>
-    <ResponseField name="elevenlabs_id" type="string">ElevenLabs agent ID.</ResponseField>
+    <ResponseField name="agent_system_id" type="string">Agent system ID.</ResponseField>
     <ResponseField name="is_active" type="boolean">Active status.</ResponseField>
     <ResponseField name="created_at" type="string">ISO 8601 creation timestamp.</ResponseField>
     <ResponseField name="updated_at" type="string">ISO 8601 last-updated timestamp.</ResponseField>
@@ -710,7 +710,7 @@ curl -X POST https://api.helpgenie.ai/v1/genies \
     "description": "AI-powered customer support assistant",
     "brand": "Acme Corp",
     "category": "Support",
-    "elevenlabs_id": "550e8400-e29b-41d4-a716-446655440008",
+    "agent_system_id": "550e8400-e29b-41d4-a716-446655440008",
     "is_active": true,
     "created_at": "2024-01-15T10:30:00.000Z",
     "updated_at": "2024-01-15T10:30:00.000Z"
@@ -768,7 +768,7 @@ Updates an existing genie's configuration. Supports partial updates -- only the 
             </ParamField>
             <ParamField body="tts" type="object">
               <Expandable title="properties">
-                <ParamField body="voice_id" type="string">New ElevenLabs voice ID.</ParamField>
+                <ParamField body="voice_id" type="string">New voice ID from the agent system.</ParamField>
                 <ParamField body="stability" type="number">Voice stability (0-1).</ParamField>
                 <ParamField body="similarity_boost" type="number">Voice similarity (0-1).</ParamField>
                 <ParamField body="speed" type="number">Speech speed multiplier.</ParamField>
@@ -880,7 +880,7 @@ const response = await ApiService.invoke(
 
 ## Delete genie
 
-Permanently deletes a genie, removes it from ElevenLabs, and releases any associated phone numbers.
+Permanently deletes a genie, removes it from the agent system, and releases any associated phone numbers.
 
 <ParamField body="resource" type="string" required>
   Must be `"genies"`
@@ -903,7 +903,7 @@ Permanently deletes a genie, removes it from ElevenLabs, and releases any associ
 </ResponseField>
 
 <Warning>
-  This action is irreversible. The genie, its ElevenLabs agent, and any attached phone numbers will be permanently removed.
+  This action is irreversible. The genie, its agent system record, and any attached phone numbers will be permanently removed.
 </Warning>
 
 <CodeGroup>

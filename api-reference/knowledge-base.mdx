@@ -3,7 +3,7 @@ title: "Knowledge base"
 description: "Manage documents, attach them to genies, and sync content across agents"
 ---
 
-The knowledge base stores documents that genies reference during conversations. Documents can be created from PDFs, websites, YouTube videos, or plain text. Each document is stored both in the HelpGenie database and in ElevenLabs.
+The knowledge base stores documents that genies reference during conversations. Documents can be created from PDFs, websites, YouTube videos, or plain text. Each document is stored both in the HelpGenie database and in the agent system.
 
 <Note>
   Standard users can only access their own documents. Admin users can access all documents and filter by owner when passing `adminMode: true`.
@@ -69,7 +69,7 @@ Retrieves all documents with pagination, filtering, and role-based access contro
         <ResponseField name="url" type="string">Source URL or storage URL.</ResponseField>
         <ResponseField name="is_active" type="boolean">Whether the document is active.</ResponseField>
         <ResponseField name="is_public" type="boolean">Whether the document is publicly visible.</ResponseField>
-        <ResponseField name="el_doc_id" type="string">ElevenLabs document identifier.</ResponseField>
+        <ResponseField name="el_doc_id" type="string">Agent system document identifier.</ResponseField>
         <ResponseField name="user_id" type="string">Owner user ID.</ResponseField>
         <ResponseField name="folder_id" type="string | null">Folder ID, or `null` if uncategorized.</ResponseField>
         <ResponseField name="metadata" type="object">
@@ -88,7 +88,7 @@ Retrieves all documents with pagination, filtering, and role-based access contro
           Genies that use this document.
           <Expandable title="item properties">
             <ResponseField name="id" type="string">Genie ID.</ResponseField>
-            <ResponseField name="elevenlabs_id" type="string">ElevenLabs agent ID.</ResponseField>
+            <ResponseField name="agent_system_id" type="string">Agent system ID.</ResponseField>
             <ResponseField name="name" type="string">Genie name.</ResponseField>
             <ResponseField name="category" type="string">Genie category.</ResponseField>
             <ResponseField name="is_active" type="boolean">Whether the genie is active.</ResponseField>
@@ -176,7 +176,7 @@ curl -X POST https://api.helpgenie.ai/v1/knowledge-base \
         "dependent_agents": [
           {
             "id": "880e8400-e29b-41d4-a716-446655440003",
-            "elevenlabs_id": "el-agent-456",
+            "agent_system_id": "el-agent-456",
             "name": "Customer Support",
             "category": "support",
             "is_active": true
@@ -196,7 +196,7 @@ curl -X POST https://api.helpgenie.ai/v1/knowledge-base \
 
 ## Get document
 
-Retrieves a single document by its UUID or 20-character ElevenLabs document ID. Returns full details including metadata, folder info, and dependent agents.
+Retrieves a single document by its UUID or 20-character agent system document ID. Returns full details including metadata, folder info, and dependent agents.
 
 <ParamField body="resource" type="string" required>
   Must be `"documents"`
@@ -207,7 +207,7 @@ Retrieves a single document by its UUID or 20-character ElevenLabs document ID. 
 </ParamField>
 
 <ParamField body="id" type="string" required>
-  The document UUID or ElevenLabs document ID (`el_doc_id`).
+  The document UUID or agent system document ID (`el_doc_id`).
 </ParamField>
 
 <ParamField body="data" type="object">
@@ -289,7 +289,7 @@ curl -X POST https://api.helpgenie.ai/v1/knowledge-base \
       "dependent_agents": [
         {
           "id": "880e8400-e29b-41d4-a716-446655440003",
-          "elevenlabs_id": "el-agent-456",
+          "agent_system_id": "el-agent-456",
           "name": "Customer Support",
           "category": "support",
           "is_active": true
@@ -344,7 +344,7 @@ Creates a new document by delegating to the document upload pipeline. Supports m
     <ResponseField name="document" type="object">
       <Expandable title="properties">
         <ResponseField name="id" type="string">New document ID.</ResponseField>
-        <ResponseField name="el_doc_id" type="string">ElevenLabs document ID.</ResponseField>
+        <ResponseField name="el_doc_id" type="string">Agent system document ID.</ResponseField>
         <ResponseField name="name" type="string">Extracted document name.</ResponseField>
         <ResponseField name="metadata" type="object">Source metadata.</ResponseField>
       </Expandable>
@@ -441,7 +441,7 @@ Updates document metadata fields without changing the content. Only the fields y
       Must be `"data"`.
     </ParamField>
     <ParamField body="name" type="string">
-      New document name. If an ElevenLabs document exists, it will be renamed there as well.
+      New document name. If an agent system document exists, it will be renamed there as well.
     </ParamField>
     <ParamField body="is_active" type="boolean">
       Active status.
@@ -531,7 +531,7 @@ const response = await ApiService.invoke(
 
 ## Update document (content mode)
 
-Replaces the document content in ElevenLabs. The old ElevenLabs document is deleted and a new one is created. All dependent agents are automatically updated with the new content.
+Replaces the document content in the agent system. The old agent system document is deleted and a new one is created. All dependent agents are automatically updated with the new content.
 
 <ParamField body="resource" type="string" required>
   Must be `"documents"`
@@ -632,14 +632,14 @@ const response = await ApiService.invoke(
 </CodeGroup>
 
 <Note>
-  Content mode deletes the old ElevenLabs document and creates a new one. All genies that depend on this document are automatically updated with the new ElevenLabs document ID.
+  Content mode deletes the old agent system document and creates a new one. All genies that depend on this document are automatically updated with the new agent system document ID.
 </Note>
 
 ---
 
 ## Delete document
 
-Permanently deletes a document, removes it from storage and ElevenLabs, and syncs the removal with all dependent agents.
+Permanently deletes a document, removes it from storage and the agent system, and syncs the removal with all dependent agents.
 
 <ParamField body="resource" type="string" required>
   Must be `"documents"`
@@ -664,7 +664,7 @@ Permanently deletes a document, removes it from storage and ElevenLabs, and sync
 </ResponseField>
 
 <Warning>
-  This action is irreversible. The document, its storage file, and its ElevenLabs record will be permanently removed. All dependent genies will have the document removed from their knowledge base.
+  This action is irreversible. The document, its storage file, and its agent system record will be permanently removed. All dependent genies will have the document removed from their knowledge base.
 </Warning>
 
 <CodeGroup>
@@ -915,7 +915,7 @@ const response = await ApiService.invoke("documents", "replace", undefined, {
 
 ## Sync documents with agents
 
-Synchronizes document changes across all dependent agents. Removes old ElevenLabs documents and adds updated ones to each agent's knowledge base. Typically used internally after document content is updated or deleted.
+Synchronizes document changes across all dependent agents. Removes old agent system documents and adds updated ones to each agent's knowledge base. Typically used internally after document content is updated or deleted.
 
 <ParamField body="resource" type="string" required>
   Must be `"documents"`
@@ -928,10 +928,10 @@ Synchronizes document changes across all dependent agents. Removes old ElevenLab
 <ParamField body="data" type="object">
   <Expandable title="properties">
     <ParamField body="oldDocId" type="string">
-      ElevenLabs document ID to remove from agents.
+      Agent system document ID to remove from agents.
     </ParamField>
     <ParamField body="newDocId" type="string">
-      ElevenLabs document ID to add to agents.
+      Agent system document ID to add to agents.
     </ParamField>
     <ParamField body="documentIds" type="string[]">
       Specific document IDs to sync. If omitted, syncs all dependent documents.
@@ -952,7 +952,7 @@ Synchronizes document changes across all dependent agents. Removes old ElevenLab
       Agents that were successfully updated.
       <Expandable title="item properties">
         <ResponseField name="agent_id" type="string">Genie ID.</ResponseField>
-        <ResponseField name="elevenlabs_id" type="string">ElevenLabs agent ID.</ResponseField>
+        <ResponseField name="agent_system_id" type="string">Agent system ID.</ResponseField>
         <ResponseField name="updated" type="boolean">Whether the agent was updated.</ResponseField>
       </Expandable>
     </ResponseField>
@@ -998,7 +998,7 @@ const response = await ApiService.invoke(
     "synced_agents": [
       {
         "agent_id": "880e8400-e29b-41d4-a716-446655440003",
-        "elevenlabs_id": "el-agent-456",
+        "agent_system_id": "el-agent-456",
         "updated": true
       }
     ],

@@ -69,10 +69,10 @@ curl -X POST https://api.helpgenie.ai/v1/conversations \
       ID of the genie this conversation belongs to.
     </ResponseField>
     <ResponseField name="el_agent_id" type="string | null">
-      ElevenLabs agent ID.
+      Agent system ID.
     </ResponseField>
-    <ResponseField name="elevenlabs_id" type="string | null">
-      ElevenLabs conversation ID.
+    <ResponseField name="agent_system_id" type="string | null">
+      Agent system conversation ID.
     </ResponseField>
     <ResponseField name="user_id" type="string | null">
       ID of the user who owns the genie.
@@ -168,8 +168,8 @@ Returns the full conversation object directly in `data`.
   ID of the genie this conversation belongs to.
 </ResponseField>
 
-<ResponseField name="elevenlabs_id" type="string | null">
-  ElevenLabs conversation ID.
+<ResponseField name="agent_system_id" type="string | null">
+  Agent system conversation ID.
 </ResponseField>
 
 <ResponseField name="status" type="string | null">
@@ -192,7 +192,7 @@ Returns the full conversation object directly in `data`.
 
 ## Sync conversations
 
-Triggers a sync of conversations from ElevenLabs for a specific genie. This delegates to the `handle-conversation` edge function.
+Triggers a sync of conversations from the agent system for a specific genie. This delegates to the `handle-conversation` edge function.
 
 <ParamField body="resource" type="string" required>
   `conversations`
@@ -229,11 +229,11 @@ const response = await ApiService.invoke({
 </ResponseField>
 
 <ResponseField name="synced" type="boolean">
-  `true` if new conversation data was pulled from ElevenLabs.
+  `true` if new conversation data was pulled from the agent system.
 </ResponseField>
 
 <ResponseField name="conversation" type="object">
-  The synced conversation record with the latest data from ElevenLabs.
+  The synced conversation record with the latest data from the agent system.
   <Expandable title="properties">
     <ResponseField name="id" type="number">
       Unique conversation identifier.
@@ -241,14 +241,14 @@ const response = await ApiService.invoke({
     <ResponseField name="agent_id" type="string">
       ID of the genie this conversation belongs to.
     </ResponseField>
-    <ResponseField name="elevenlabs_id" type="string">
-      ElevenLabs conversation ID.
+    <ResponseField name="agent_system_id" type="string">
+      Agent system conversation ID.
     </ResponseField>
     <ResponseField name="status" type="string">
-      Updated conversation status from ElevenLabs.
+      Updated conversation status from the agent system.
     </ResponseField>
     <ResponseField name="metadata" type="object | null">
-      Conversation metadata, including any data synced from ElevenLabs.
+      Conversation metadata, including any data synced from the agent system.
     </ResponseField>
     <ResponseField name="created_at" type="string">
       ISO 8601 timestamp.
@@ -257,7 +257,7 @@ const response = await ApiService.invoke({
 </ResponseField>
 
 <Note>
-  Sync pulls the latest conversation data from ElevenLabs, including updated transcripts, status, and metadata. The authenticated user must own the genie specified by `agentId`. A `403 FORBIDDEN` error is returned otherwise.
+  Sync pulls the latest conversation data from the agent system, including updated transcripts, status, and metadata. The authenticated user must own the genie specified by `agentId`. A `403 FORBIDDEN` error is returned otherwise.
 </Note>
 
 ---
